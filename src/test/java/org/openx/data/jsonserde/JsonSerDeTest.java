@@ -94,7 +94,101 @@ public class JsonSerDeTest {
 
         instance.initialize(conf, tbl);
     }
-    
+
+    public void initialize3(JsonSerDe instance) throws Exception {
+        System.out.println("initialize");
+
+        Configuration conf = null;
+        Properties tbl = new Properties();
+        tbl.setProperty(Constants.LIST_COLUMNS, "date,apiKey,recProducts,feature");
+        tbl.setProperty(Constants.LIST_COLUMN_TYPES, "string,string,string,string");
+
+        instance.initialize(conf, tbl);
+    }
+
+    public void initialize4(JsonSerDe instance) throws Exception {
+        System.out.println("initialize");
+
+        Configuration conf = null;
+        Properties tbl = new Properties();
+        tbl.setProperty(Constants.LIST_COLUMNS, "apiKey,version,id,categories");
+        tbl.setProperty(Constants.LIST_COLUMN_TYPES, "string,string,string,string");
+
+        instance.initialize(conf, tbl);
+    }
+
+    @Test
+    public void testDeserializeETL1() throws Exception {
+        JsonSerDe instance = new JsonSerDe();
+        initialize3(instance);
+        
+        System.out.println("deserializeETL1");
+        Writable w = new Text("{\"date\":\"2013-12-01 18:46:36\",\"apiKey\":\"hope\",\"recProducts\":[{\"id\":\"1677\",\"sku\":null,\"price\":null,\"specs\":{}},{\"id\":\"1008\",\"sku\":null,\"price\":null,\"specs\":{}},{\"id\":\"469\",\"sku\":null,\"price\":null,\"specs\":{}},{\"id\":\"5333\",\"sku\":null,\"price\":null,\"specs\":{}}],\"feature\":\"ultimatebuy\"}");
+        JSONObject result = (JSONObject) instance.deserialize(w);
+
+        System.out.println(result);
+        System.out.println(result.get("recproducts"));
+        System.out.println(result.get("recproducts").getClass().getName());
+        //assertEquals(result.get("four"), "poop");
+        //assertTrue(result.get("three") instanceof JSONArray);
+        
+        //assertTrue( ((JSONArray)result.get("three")).get(0) instanceof String );
+        //assertEquals( ((JSONArray)result.get("three")).get(0),"red");
+    }    
+
+    @Test
+    public void testDeserializeETL2() throws Exception {
+        JsonSerDe instance = new JsonSerDe();
+        initialize3(instance);
+        
+        System.out.println("deserializeETL2");
+        Writable w = new Text("{\"date\":\"2013-12-01 00:00:00\",\"apiKey\":\"marisa\",\"info\":{\"browser\":\"Chrome 32.0.1700\",\"os\":\"Windows 7\",\"ip\":\"10.166.47.230\"},\"items\":[{\"product\":{\"id\":\"87226\",\"sku\":\"ZYYNP0QB1Y\",\"price\":119.99,\"specs\":{\"color\":\"Preto\",\"size\":\"37\"}},\"tags\":[],\"quantity\":1,\"status\":\"CONFIRMED\"}],\"tgCode\":null,\"type\":\"transaction\",\"version\":\"V2\"}");
+        JSONObject result = (JSONObject) instance.deserialize(w);
+
+        System.out.println(result.get("items"));
+        System.out.println(result.get("items").getClass().getName());
+        //assertEquals(result.get("four"), "poop");
+        //assertTrue(result.get("three") instanceof JSONArray);
+        
+        //assertTrue( ((JSONArray)result.get("three")).get(0) instanceof String );
+        //assertEquals( ((JSONArray)result.get("three")).get(0),"red");
+    }
+
+    @Test
+    public void testDeserializeETL3() throws Exception {
+        JsonSerDe instance = new JsonSerDe();
+        initialize3(instance);
+        
+        System.out.println("deserializeETL3");
+        Writable w = new Text("{\"apiKey\":\"shopfisio\",\"version\":\"V2\",\"id\":\"1252956\",\"categories\":null}");
+        JSONObject result = (JSONObject) instance.deserialize(w);
+
+        System.out.println(result);
+        
+        //assertEquals(result.get("four"), "poop");
+        //assertTrue(result.get("three") instanceof JSONArray);
+        
+        //assertTrue( ((JSONArray)result.get("three")).get(0) instanceof String );
+        //assertEquals( ((JSONArray)result.get("three")).get(0),"red");
+    }  
+
+    @Test
+    public void testDeserializeETL4() throws Exception {
+        JsonSerDe instance = new JsonSerDe();
+        initialize3(instance);
+        
+        System.out.println("deserializeETL4");
+        Writable w = new Text("{\"apiKey\":\"shopfisio\",\"version\":\"V2\",\"id\":\"1252143\",\"categories\":[]}");
+        JSONObject result = (JSONObject) instance.deserialize(w);
+
+        System.out.println(result);
+        
+        //assertEquals(result.get("four"), "poop");
+        //assertTrue(result.get("three") instanceof JSONArray);
+        
+        //assertTrue( ((JSONArray)result.get("three")).get(0) instanceof String );
+        //assertEquals( ((JSONArray)result.get("three")).get(0),"red");
+    }  
 
     /**
      * Test of deserialize method, of class JsonSerDe.

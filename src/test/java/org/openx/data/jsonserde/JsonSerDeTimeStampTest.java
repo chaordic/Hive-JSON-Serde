@@ -60,7 +60,7 @@ public class JsonSerDeTimeStampTest {
     Writable w = new Text("{\"one\":true,\"five\":1367801925}");
 
     JSONObject result = (JSONObject) instance.deserialize(w);
-    assertEquals(result.get("five"),  Timestamp.valueOf("2013-05-05 17:58:45.0") );
+    assertEquals(result.get("five"),  Timestamp.valueOf("2013-05-05 21:58:45.0") );
   }
 
   @Test
@@ -69,7 +69,7 @@ public class JsonSerDeTimeStampTest {
     Writable w = new Text("{\"one\":true,\"five\":1367801925.123}");
 // 
     JSONObject result = (JSONObject) instance.deserialize(w);
-    assertEquals(result.get("five"), Timestamp.valueOf("2013-05-05 17:58:45.123"));
+    assertEquals(result.get("five"), Timestamp.valueOf("2013-05-05 21:58:45.123"));
   }
 
 

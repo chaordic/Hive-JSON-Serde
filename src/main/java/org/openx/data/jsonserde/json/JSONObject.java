@@ -249,7 +249,7 @@ public class JSONObject {
             while (i.hasNext()) {
                 Map.Entry e = (Map.Entry)i.next();
                 Object value = e.getValue();
-                if (value != null) {
+                if (!isNullValue(value)) {
                     this.map.put(e.getKey(), wrap(value));
                 }
             }
@@ -673,7 +673,7 @@ public class JSONObject {
      */
     public JSONObject increment(String key) throws JSONException {
         Object value = opt(key);
-        if (value == null) {
+        if (isNullValue(value)) {
             put(key, 1);
         } else if (value instanceof Integer) {
             put(key, ((Integer)value).intValue() + 1);
@@ -1107,8 +1107,13 @@ public class JSONObject {
         if (key == null) {
             throw new JSONException("Null key.");
         }
-        if (value != null) {
+        if (!isNullValue(value)) {
             testValidity(value);
+
+            if(isChaordicKeyToFix(key)) {
+                value = applyChaordicValueFix(value.toString());
+            }
+
             this.map.put(key, value);
         } else {
             remove(key);
@@ -1116,6 +1121,28 @@ public class JSONObject {
         return this;
     }
 
+    private static boolean isNullValue(Object value)
+    {
+        if (value != null && !value.toString().equalsIgnoreCase("null")){
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isChaordicKeyToFix(String key)
+    {
+        // keys from V2 where there was a problem if array of jsons
+        if(key.equalsIgnoreCase("categories") || key.equalsIgnoreCase("refProducts") || key.equalsIgnoreCase("recProducts") || key.equalsIgnoreCase("products") || key.equalsIgnoreCase("skus") || key.equalsIgnoreCase("productCategories")){
+            return true;
+        }
+        return false;
+    }
+
+    private String applyChaordicValueFix(String value){
+        // give a name to the array so Hive can get it with json_tuple
+        value = "{\"array\":"+value.toString()+"}";
+        return value;
+    }
 
     /**
      * Put a key/value pair in the JSONObject, but only if the key and the
@@ -1127,7 +1154,7 @@ public class JSONObject {
      * @throws JSONException if the key is a duplicate
      */
     public final JSONObject putOnce(String key, Object value) throws JSONException {
-        if (key != null && value != null) {
+        if (key != null && !isNullValue(value)) {
             if (opt(key) != null) {
                 throw new JSONException("Duplicate key \"" + key + "\"");
             }
@@ -1148,7 +1175,7 @@ public class JSONObject {
      * @throws JSONException If the value is a non-finite number.
      */
     public final JSONObject putOpt(String key, Object value) throws JSONException {
-        if (key != null && value != null) {
+        if (key != null && !isNullValue(value)) {
             put(key, value);
         }
         return this;
@@ -1426,7 +1453,7 @@ public class JSONObject {
      * @throws JSONException If the value is or contains an invalid number.
      */
     public static String valueToString(Object value) throws JSONException {
-        if (value == null ) {
+        if (isNullValue(value) ) {
             return "null";
         }
         if (value instanceof JSONString) {
@@ -1480,7 +1507,7 @@ public class JSONObject {
          int    indentFactor, 
          int    indent
      ) throws JSONException {
-        if (value == null ) {
+        if (isNullValue(value) ) {
             return "null";
         }
         try {
