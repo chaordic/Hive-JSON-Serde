@@ -1109,11 +1109,6 @@ public class JSONObject {
         }
         if (!isNullValue(value)) {
             testValidity(value);
-
-            if(isChaordicKeyToFix(key)) {
-                value = applyChaordicValueFix(value.toString());
-            }
-
             this.map.put(key, value);
         } else {
             remove(key);
@@ -1124,6 +1119,7 @@ public class JSONObject {
     private static boolean isNullValue(Object value)
     {
         if (value != null && !value.toString().equalsIgnoreCase("null")){
+        //if (value != null){
             return false;
         }
         return true;
@@ -1132,17 +1128,23 @@ public class JSONObject {
     private boolean isChaordicKeyToFix(String key)
     {
         // keys from V2 where there was a problem if array of jsons
-        if(key.equalsIgnoreCase("categories") || key.equalsIgnoreCase("refProducts") || key.equalsIgnoreCase("recProducts") || key.equalsIgnoreCase("products") || key.equalsIgnoreCase("skus") || key.equalsIgnoreCase("productCategories")){
+        // it isn't possible to know beforehand if a array will turn into a array of strings
+        // or of json objetcs, so the affected keys must be hardcoded
+        if(key.equalsIgnoreCase("categories") || key.equalsIgnoreCase("refProducts") || 
+            key.equalsIgnoreCase("recProducts") || key.equalsIgnoreCase("products") ||
+            key.equalsIgnoreCase("skus") || key.equalsIgnoreCase("productCategories") ||
+            key.equalsIgnoreCase("buyorderitems") || key.equalsIgnoreCase("purchases") ||
+            key.equalsIgnoreCase("items")){
             return true;
         }
         return false;
     }
 
-    private String applyChaordicValueFix(String value){
+    /*private String applyChaordicValueFix(String value){
         // give a name to the array so Hive can get it with json_tuple
         value = "{\"array\":"+value.toString()+"}";
         return value;
-    }
+    }*/
 
     /**
      * Put a key/value pair in the JSONObject, but only if the key and the
@@ -1154,15 +1156,19 @@ public class JSONObject {
      * @throws JSONException if the key is a duplicate
      */
     public final JSONObject putOnce(String key, Object value) throws JSONException {
-        if (key != null && !isNullValue(value)) {
-            if (opt(key) != null) {
+        if (key != null) {
+            if(!isNullValue(value)) {
+                if (opt(key) != null) {
                 throw new JSONException("Duplicate key \"" + key + "\"");
+                }
+                put(key, value);
             }
-            put(key, value);
+            else if(isChaordicKeyToFix(key)) {
+                put(key, new JSONArray());
+            }
         }
         return this;
     }
-
 
     /**
      * Put a key/value pair in the JSONObject, but only if the

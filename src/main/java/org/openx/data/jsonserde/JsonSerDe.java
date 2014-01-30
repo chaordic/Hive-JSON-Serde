@@ -172,7 +172,7 @@ public class JsonSerDe implements SerDe {
                  */
                 @Override
                 public JSONObject put(String key, Object value) throws JSONException {
-
+        
                     try {
                         if (columnNames.contains(key) && 
                                 rowTypeInfo.getStructFieldTypeInfo(key).getCategory().equals(PrimitiveObjectInspector.Category.PRIMITIVE) &&
@@ -201,6 +201,7 @@ public class JsonSerDe implements SerDe {
                     return super.put(key.toLowerCase(), value);
                 }
             };
+
         } catch (JSONException e) {
             // If row is not a JSON object, make the whole row NULL
             onMalformedJson("Row is not a valid JSON Object - JSONException: "

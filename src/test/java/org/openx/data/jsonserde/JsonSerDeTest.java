@@ -145,6 +145,7 @@ public class JsonSerDeTest {
         Writable w = new Text("{\"date\":\"2013-12-01 00:00:00\",\"apiKey\":\"marisa\",\"info\":{\"browser\":\"Chrome 32.0.1700\",\"os\":\"Windows 7\",\"ip\":\"10.166.47.230\"},\"items\":[{\"product\":{\"id\":\"87226\",\"sku\":\"ZYYNP0QB1Y\",\"price\":119.99,\"specs\":{\"color\":\"Preto\",\"size\":\"37\"}},\"tags\":[],\"quantity\":1,\"status\":\"CONFIRMED\"}],\"tgCode\":null,\"type\":\"transaction\",\"version\":\"V2\"}");
         JSONObject result = (JSONObject) instance.deserialize(w);
 
+        System.out.println(result);
         System.out.println(result.get("items"));
         System.out.println(result.get("items").getClass().getName());
         //assertEquals(result.get("four"), "poop");
@@ -164,6 +165,7 @@ public class JsonSerDeTest {
         JSONObject result = (JSONObject) instance.deserialize(w);
 
         System.out.println(result);
+        //System.out.println(result.get("categories").getClass().getName());
         
         //assertEquals(result.get("four"), "poop");
         //assertTrue(result.get("three") instanceof JSONArray);
@@ -182,6 +184,7 @@ public class JsonSerDeTest {
         JSONObject result = (JSONObject) instance.deserialize(w);
 
         System.out.println(result);
+        System.out.println(result.get("categories").getClass().getName());
         
         //assertEquals(result.get("four"), "poop");
         //assertTrue(result.get("three") instanceof JSONArray);
